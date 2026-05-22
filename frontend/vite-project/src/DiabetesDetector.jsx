@@ -32,7 +32,12 @@ export default function DiabetesApp() {
   const [error, setError]     = useState(null);
   const [activeField, setActiveField] = useState(null);
 
-  const handleChange = (key, val) => setValues(v => ({ ...v, [key]: parseFloat(val) }));
+  const handleChange = (key, val) => {
+  setValues(v => ({
+    ...v,
+    [key]: val === "" ? "" : Number(val)
+  }));
+};
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -115,7 +120,7 @@ export default function DiabetesApp() {
                     min={f.min}
                     max={f.max}
                     step={f.step}
-                    value={values[f.key]}
+                    value={values[f.key] ?? ""}
                     onChange={e => handleChange(f.key, e.target.value)}
                     style={styles.input}
                   />
@@ -123,7 +128,14 @@ export default function DiabetesApp() {
                   <div style={styles.rangeBar}>
                     <div style={{
                       ...styles.rangeFill,
-                      width: `${Math.min(100, ((values[f.key] - f.min) / (f.max - f.min)) * 100)}%`,
+                      width: `${
+  Number.isFinite(values[f.key])
+    ? Math.min(
+        100,
+        ((values[f.key] - f.min) / (f.max - f.min)) * 100
+      )
+    : 0
+}%`,
                     }} />
                   </div>
                   <div style={styles.rangeLabels}>

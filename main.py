@@ -46,23 +46,21 @@ def predict(data: PatientData):
 
     patient = data.dict()
 
-    # -------- BMI Categories --------
+    # BMI categories
     bmi = patient["BMI"]
 
     patient["BMI_Category_Obese"] = int(bmi >= 30)
     patient["BMI_Category_Overweight"] = int(25 <= bmi < 30)
     patient["BMI_Category_Underweight"] = int(bmi < 18.5)
 
-    # -------- Age Groups --------
+    # Age groups
     age = patient["Age"]
 
     patient["Age_Group_Senior"] = int(age > 50)
     patient["Age_Group_Young"] = int(age < 30)
 
-    # IMPORTANT: use ALL 13 features
-    input_df = pd.DataFrame([patient])
-
-    model_features = [
+    # EXACT order expected by model
+    input_df = pd.DataFrame([patient])[[
         'Pregnancies',
         'Glucose',
         'BloodPressure',
@@ -76,9 +74,7 @@ def predict(data: PatientData):
         'BMI_Category_Underweight',
         'Age_Group_Senior',
         'Age_Group_Young'
-    ]
-
-    input_df = input_df[model_features]
+    ]]
 
     prob = float(model.predict_proba(input_df)[0][1])
     pred = int(prob >= 0.5)
@@ -94,7 +90,7 @@ def predict(data: PatientData):
             "value": float(input_df[f].iloc[0]),
             "shap": round(s, 4)
         }
-        for f, s in zip(model_features, shap_vals)
+        for f, s in zip(input_df.columns, shap_vals)
     ]
 
     contributions.sort(
