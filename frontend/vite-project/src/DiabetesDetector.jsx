@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = "https://your-diabetes-api.onrender.com"; // 🔁 Replace with your Render URL
+const API_URL = "https://diabetes-detection-model.onrender.com"; // 🔁 Replace with your Render URL
 
 const FIELDS = [
   { key: "Pregnancies",              label: "Pregnancies",                unit: "times",   min: 0,   max: 17,  step: 1,    default: 1,    desc: "Number of times pregnant" },

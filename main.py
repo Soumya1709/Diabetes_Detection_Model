@@ -42,25 +42,49 @@ def root():
 
 @app.post("/predict")
 def predict(data: PatientData):
-    input_df = pd.DataFrame([data.dict()])[FEATURES]
-    prob     = float(model.predict_proba(input_df)[0][1])
-    pred     = int(prob >= 0.5)
+
+    patient = data.dict()
+
+    # BMI category
+    bmi = patient["BMI"]
+
+    patient["BMI_Category_Obese"] = int(bmi >= 30)
+    patient["BMI_Category_Overweight"] = int(25 <= bmi < 30)
+    patient["BMI_Category_Underweight"] = int(bmi < 18.5)
+
+    # Age group
+    age = patient["Age"]
+
+    patient["Age_Group_Senior"] = int(age > 50)
+    patient["Age_Group_Young"] = int(age < 30)
+
+    input_df = pd.DataFrame([patient])[FEATURES]
+
+    prob = float(model.predict_proba(input_df)[0][1])
+    pred = int(prob >= 0.5)
 
     # SHAP
-    sv          = explainer(input_df)
-    shap_vals   = sv.values[0].tolist()
-    base_val    = float(sv.base_values[0])
+    sv = explainer(input_df)
+    shap_vals = sv.values[0].tolist()
+    base_val = float(sv.base_values[0])
 
     contributions = [
-        {"feature": f, "value": float(input_df[f].iloc[0]),
-         "shap": round(s, 4)}
+        {
+            "feature": f,
+            "value": float(input_df[f].iloc[0]),
+            "shap": round(s, 4)
+        }
         for f, s in zip(FEATURES, shap_vals)
     ]
-    contributions.sort(key=lambda x: abs(x["shap"]), reverse=True)
+
+    contributions.sort(
+        key=lambda x: abs(x["shap"]),
+        reverse=True
+    )
 
     return {
         "probability": round(prob, 4),
-        "prediction":  pred,
-        "base_value":  round(base_val, 4),
-        "shap":        contributions,
+        "prediction": pred,
+        "base_value": round(base_val, 4),
+        "shap": contributions,
     }
