@@ -19,6 +19,7 @@ app.add_middleware(
 # Load model once at startup
 with open("diabetes_xgb_model.pkl", "rb") as f:
     model = pickle.load(f)
+    print(model.feature_names_in_)
 
 explainer = shap.TreeExplainer(model)
 
@@ -45,20 +46,39 @@ def predict(data: PatientData):
 
     patient = data.dict()
 
-    # BMI category
+    # -------- BMI Categories --------
     bmi = patient["BMI"]
 
     patient["BMI_Category_Obese"] = int(bmi >= 30)
     patient["BMI_Category_Overweight"] = int(25 <= bmi < 30)
     patient["BMI_Category_Underweight"] = int(bmi < 18.5)
 
-    # Age group
+    # -------- Age Groups --------
     age = patient["Age"]
 
     patient["Age_Group_Senior"] = int(age > 50)
     patient["Age_Group_Young"] = int(age < 30)
 
-    input_df = pd.DataFrame([patient])[FEATURES]
+    # IMPORTANT: use ALL 13 features
+    input_df = pd.DataFrame([patient])
+
+    model_features = [
+        'Pregnancies',
+        'Glucose',
+        'BloodPressure',
+        'SkinThickness',
+        'Insulin',
+        'BMI',
+        'DiabetesPedigreeFunction',
+        'Age',
+        'BMI_Category_Obese',
+        'BMI_Category_Overweight',
+        'BMI_Category_Underweight',
+        'Age_Group_Senior',
+        'Age_Group_Young'
+    ]
+
+    input_df = input_df[model_features]
 
     prob = float(model.predict_proba(input_df)[0][1])
     pred = int(prob >= 0.5)
@@ -74,7 +94,7 @@ def predict(data: PatientData):
             "value": float(input_df[f].iloc[0]),
             "shap": round(s, 4)
         }
-        for f, s in zip(FEATURES, shap_vals)
+        for f, s in zip(model_features, shap_vals)
     ]
 
     contributions.sort(
