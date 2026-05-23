@@ -318,10 +318,10 @@ const styles = {
     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E")`,
   },
   orb: { position: "fixed", borderRadius: "50%", pointerEvents: "none", zIndex: 0 },
-  container: { maxWidth: 1200, margin: "0 auto", padding: "32px 24px", position: "relative", zIndex: 1 },
+  container: { maxWidth: 1200, margin: "0 auto", padding: "20px", position: "relative", zIndex: 1 },
 
   header: {
-    display: "flex", alignItems: "center", gap: 16, marginBottom: 36,
+    display: "flex",flexWrap: "wrap", alignItems: "center", gap: 16, marginBottom: 36,
     paddingBottom: 24, borderBottom: "1px solid rgba(255,255,255,0.06)",
   },
   logoMark: {
@@ -341,7 +341,7 @@ const styles = {
     borderRadius: 6, padding: "4px 10px", letterSpacing: "0.05em",
   },
 
-  layout: { display: "grid", gridTemplateColumns: "420px 1fr", gap: 20, alignItems: "start" },
+  layout: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 20, alignItems: "start" },
 
   card: {
     background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.07)",
@@ -455,7 +455,7 @@ const styles = {
   shapBaseVal:   { fontSize: 12, fontFamily: "'Space Mono', monospace", color: "rgba(226,232,240,0.4)" },
 
   shapRow: { display: "flex", alignItems: "center", gap: 10, marginBottom: 8 },
-  shapFeature: { width: 190, flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" },
+  shapFeature: { minwidth: 120,width:"30%", flexShrink: 0, display: "flex", justifyContent: "space-between", alignItems: "center" },
   shapName: { fontSize: 12, color: "rgba(226,232,240,0.7)", fontWeight: 400 },
   shapVal:  { fontSize: 11, fontFamily: "'Space Mono', monospace", color: "rgba(226,232,240,0.35)" },
   shapBarWrap: { flex: 1, height: 14, position: "relative", background: "rgba(255,255,255,0.04)", borderRadius: 4, overflow: "hidden" },
